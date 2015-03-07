@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Files Statistic App</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="biggestFiles">Biggest Files</string>
+    <string name="mostFrequentExtensions">Most Frequent Extensions</string>
+    <string name="averageFileSize">Average file size</string>
+    <string name="external">External</string>
+    <string name="internal">Internal</string>
+    <string name="internal_external">External/Internal</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+</resources>
