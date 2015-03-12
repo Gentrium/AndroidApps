@@ -9,6 +9,8 @@ import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
@@ -63,9 +65,9 @@ public class DataProcessing extends Service {
     }
     class MyRun implements Runnable {
 
-        private File[] fileList = new File[10];
-        private TreeMap<String, Integer> extensions;
-        private long averageFileSize;
+        private ArrayList<File> fileList = new ArrayList<>();
+        private TreeMap<String, Integer> extensions = new TreeMap<String,Integer>();
+        private long averageFileSize = 0;
         int startId;
         PendingIntent pi;
 
@@ -92,26 +94,28 @@ public class DataProcessing extends Service {
         void stop() {
         }
 
-        protected void sendFileList() throws PendingIntent.CanceledException {
-            ArrayList<String> tempFileList = null;
-            for (File f : fileList) {
-                tempFileList.add((f.getName() + ' ' + f.length() / 1024).toString());
-            }
-            Intent intent = new Intent().putStringArrayListExtra(MainScreen.FILE_LIST, tempFileList);
-            try {
-                pi.send(DataProcessing.this, MainScreen.FILE_LIST_RESULT, intent);
-            } catch (PendingIntent.CanceledException e) {
-                e.printStackTrace();
-            }
-        }
+//        protected void sendFileList() throws PendingIntent.CanceledException {
+//
+//            Intent intent = new Intent()
+//            try {
+//                pi.send(DataProcessing.this, MainScreen.FILE_LIST_RESULT, intent);
+//            } catch (PendingIntent.CanceledException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
         protected void sendExtensionsAndSize(){
             TreeMap temp = new TreeMap();
             temp =(TreeMap)SortingInformation.sortByValues(extensions);
             ArrayList<String> extensionsArray = new ArrayList(temp.entrySet());
+            ArrayList<String> tempFileList = null;
+            for (File f : fileList) {
+                tempFileList.add((f.getName() + ' ' + f.length() / 1024).toString());
+            }
             Intent intent = new Intent()
                     .putExtra(MainScreen.AVERAGE_FILE_SIZE, averageFileSize)
-                    .putStringArrayListExtra(MainScreen.EXTENSIONS_LIST, extensionsArray );
+                    .putStringArrayListExtra(MainScreen.EXTENSIONS_LIST, extensionsArray)
+                    .putStringArrayListExtra(MainScreen.FILE_LIST, tempFileList);
             try {
                 pi.send(DataProcessing.this,MainScreen.EXTENSIONS_AND_AVERAGE_SIZE, intent);
             } catch (PendingIntent.CanceledException e) {
@@ -136,22 +140,43 @@ public class DataProcessing extends Service {
                             extensions.put(extension, 1);
                         }
                         totalFilesSize += listFile[i].length();
-                        count++;
-                        sendExtensionsAndSize();
-                        averageFileSize = totalFilesSize / count;
-                        if (listFile[i].length() > fileList[0].length()) {
-                            listFile[i] = fileList[0];
-                            SortingInformation.insertionSort(fileList);
-                            try {
-                                sendFileList();
-                            } catch (PendingIntent.CanceledException e) {
-                                e.printStackTrace();
-                            }
+                        ++count;
+
+                        averageFileSize = (totalFilesSize / count);
+                        if(fileList.size() < 9){
+                            fileList.add(listFile[i]);
+                            File[] fileListArr = new File[fileList.size()];
+                            fileListArr = fileList.toArray(fileListArr);
+                            Arrays.sort(fileListArr ,new Comparator<File>() {
+                                @Override
+                                public int compare(File first, File second) {
+                                    int result = Long.valueOf(first.length())
+                                            .compareTo(Long.valueOf(second.length()));
+                                    return result;
+                                }
+                            });
+                        }else if (fileList.size() > 9 &&
+                                listFile[i].length() > fileList.get(0).length()) {
+                            File[] fileListArr = new File[fileList.size()];
+                            fileList.add(listFile[i]);
+                            fileListArr = fileList.toArray(fileListArr);
+                            Arrays.sort(fileListArr ,new Comparator<File>() {
+                                @Override
+                                public int compare(File first, File second) {
+                                    int result = Long.valueOf(first.length())
+                                            .compareTo(Long.valueOf(second.length()));
+                                    return result;
+                                }
+                            });
+//                            SortingInformation.insertionSort(fileList);
+//                                sendFileList();
+                            sendExtensionsAndSize();
+
                         }
                     }
                 }
             }
-            return fileList;
+            return null;
         }
     }
 }

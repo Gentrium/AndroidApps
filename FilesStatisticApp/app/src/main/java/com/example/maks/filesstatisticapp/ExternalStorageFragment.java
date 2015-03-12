@@ -52,11 +52,22 @@ public class ExternalStorageFragment extends Fragment {
     public static void fillData(ArrayList<String> fileList,
                                 ArrayList<String> extensionsList,
                                 long averageFileSizeText){
-        for(String e: extensionsList.subList(0,5)){
-            TextView textView = new TextView(context);
-            textView.setText(e);
-            textView.setPadding(5, 5, 5, 5);
-            listOfExtensions.addView(textView);
+
+        if (extensionsList.size()>4) {
+            for (String e : extensionsList.subList(0, 5)) {
+                TextView textView = new TextView(context);
+                textView.setText(e);
+                textView.setPadding(5, 5, 5, 5);
+                listOfExtensions.addView(textView);
+            }
+        } else{
+            for (String e : extensionsList) {
+                TextView textView = new TextView(context);
+                textView.setText(e);
+                textView.setPadding(5, 5, 5, 5);
+                listOfExtensions.addView(textView);
+            }
+
         }
         for(String e: fileList){
             TextView textView = new TextView(context);

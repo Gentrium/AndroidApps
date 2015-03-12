@@ -134,7 +134,7 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
         super.onActivityResult(requestCode, resultCode, data);
         this.data = data;
         // Ловим сообщения о старте задач
-        if (resultCode == STATUS_START) {
+        if (resultCode == EXTENSIONS_AND_AVERAGE_SIZE) {
             switch (requestCode) {
                 case EXTERNAL_TESTING:
                     trigger = 1;

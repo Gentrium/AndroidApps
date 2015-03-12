@@ -1,6 +1,7 @@
 package com.example.maks.filesstatisticapp;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,4 +42,11 @@ public class SortingInformation {
         sortedByValues.putAll(map);
         return sortedByValues;
     }
+
+//    public static sortingArray(final ArrayList<File> fileList){
+//        Comparator<File> sizeComparator = (s1, s2) ->{
+//            int compare fileList.get(s1).length().compareTo(fileList.get(s2).length());
+//        }
+//        return fileList;
+//    }
 }
