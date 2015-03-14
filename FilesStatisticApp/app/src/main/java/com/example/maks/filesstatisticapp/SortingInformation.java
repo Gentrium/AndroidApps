@@ -14,7 +14,6 @@ public class SortingInformation {
 
     SortingInformation(){}
 
-
     protected static void insertionSort(File[] arr) {
         for(int i = 1; i < arr.length; i++){
             long currElem = arr[i].length();
@@ -29,7 +28,6 @@ public class SortingInformation {
         }
     }
 
-
     public static <K, V extends Comparable<V>> Map<K, V> sortByValues(final Map<K, V> map) {
         Comparator<K> valueComparator =  new Comparator<K>() {
             public int compare(K k1, K k2) {
@@ -42,11 +40,4 @@ public class SortingInformation {
         sortedByValues.putAll(map);
         return sortedByValues;
     }
-
-//    public static sortingArray(final ArrayList<File> fileList){
-//        Comparator<File> sizeComparator = (s1, s2) ->{
-//            int compare fileList.get(s1).length().compareTo(fileList.get(s2).length());
-//        }
-//        return fileList;
-//    }
 }

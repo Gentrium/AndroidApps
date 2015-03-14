@@ -1,26 +1,21 @@
 package com.example.maks.filesstatisticapp;
 
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Environment;
 import android.os.IBinder;
-import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public class DataProcessing extends Service {
 
     ExecutorService es;
     File root;
+    int target;
     int count = 0;
     long totalFilesSize = 0;
 
@@ -31,25 +26,22 @@ public class DataProcessing extends Service {
 
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        PendingIntent pi = intent.getParcelableExtra(MainScreen.PENDING_INTENT_PARAMS);
-        root = new File(Environment.getExternalStorageDirectory()
-                .getAbsolutePath());
-
         int testingTarget = intent.getIntExtra(MainScreen.TEST_TARGET, 1);
         switch (testingTarget){
             case MainScreen.EXTERNAL_TESTING:
                 root = new File(Environment.getExternalStorageDirectory()
                         .getAbsolutePath());
+                target = MainScreen.EXTERNAL_TESTING;
                 break;
             case MainScreen.INTERNAL_TESTING:
                 root = new File(Environment.getRootDirectory().getAbsolutePath());
+                target = MainScreen.INTERNAL_TESTING;
                 break;
-            case MainScreen.INTERNAL_AND_EXTERNAL_TESTING:
-                break;
+            default:
         }
 
 
-        MyRun mr = new MyRun(startId, pi);
+        MyRun mr = new MyRun(startId, root, target);
         es.execute(mr);
 
         return super.onStartCommand(intent, flags, startId);
@@ -63,115 +55,75 @@ public class DataProcessing extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
-    class MyRun implements Runnable {
 
-        private ArrayList<File> fileList = new ArrayList<>();
-        private TreeMap<String, Integer> extensions = new TreeMap<String,Integer>();
+    class MyRun implements Runnable {
+        private File[] temporary = new File[10];
+        private TreeMap<String, Integer> extensions = new TreeMap<>();
         private long averageFileSize = 0;
         int startId;
-        PendingIntent pi;
+        File root;
+        int target;
 
-        public MyRun( int startId, PendingIntent pi) {
+        public MyRun( int startId, File root, int target) {
             this.startId = startId;
-            this.pi = pi;
+            this.root = root;
+            this.target = target;
         }
 
         public void run() {
-
-            try {
-                pi.send(MainScreen.STATUS_START);
-                scanFiles(root);
-                // сообщаем об окончании задачи
-                Intent intent = new Intent().putExtra(MainScreen.PENDING_INTENT_PARAMS,true);
-                pi.send(DataProcessing.this, MainScreen.STATUS_FINISH, intent);
-
-            } catch (PendingIntent.CanceledException e) {
-                e.printStackTrace();
-            }
+            scanFiles(root);
             stop();
         }
-
         void stop() {
         }
-
-//        protected void sendFileList() throws PendingIntent.CanceledException {
-//
-//            Intent intent = new Intent()
-//            try {
-//                pi.send(DataProcessing.this, MainScreen.FILE_LIST_RESULT, intent);
-//            } catch (PendingIntent.CanceledException e) {
-//                e.printStackTrace();
-//            }
-//        }
 
         protected void sendExtensionsAndSize(){
             TreeMap temp = new TreeMap();
             temp =(TreeMap)SortingInformation.sortByValues(extensions);
-            ArrayList<String> extensionsArray = new ArrayList(temp.entrySet());
-            ArrayList<String> tempFileList = null;
-            for (File f : fileList) {
-                tempFileList.add((f.getName() + ' ' + f.length() / 1024).toString());
+            ArrayList<String> extensionsArray = new ArrayList<>();
+            ArrayList<String> tempFileList = new ArrayList<>();
+            for(Object o : temp.entrySet()){
+                extensionsArray.add(o.toString());
             }
-            Intent intent = new Intent()
+            for (File f : temporary) {
+                tempFileList.add((f.getName() + ' ' + f.length() / 1024 + "Kb").toString());
+            }
+            Intent intent = new Intent(MainScreen.BROADCAST_ACTION)
                     .putExtra(MainScreen.AVERAGE_FILE_SIZE, averageFileSize)
                     .putStringArrayListExtra(MainScreen.EXTENSIONS_LIST, extensionsArray)
-                    .putStringArrayListExtra(MainScreen.FILE_LIST, tempFileList);
-            try {
-                pi.send(DataProcessing.this,MainScreen.EXTENSIONS_AND_AVERAGE_SIZE, intent);
-            } catch (PendingIntent.CanceledException e) {
-                e.printStackTrace();
-            }
+                    .putStringArrayListExtra(MainScreen.FILE_LIST, tempFileList)
+                    .putExtra(MainScreen.TEST_TARGET,target);
+
+            sendBroadcast(intent);
         }
 
-
         public File[] scanFiles(File dir) {
-
-            File listFile[] = dir.listFiles();
-            if (listFile != null && listFile.length > 0) {
-                for (int i = 0; i < listFile.length; i++) {
-                    if (listFile[i].isDirectory()) {
-                        scanFiles(listFile[i]);
+            File currentFile[] = dir.listFiles();
+            if (currentFile != null && currentFile.length > 0) {
+                for (int i = 0; i < currentFile.length; i++) {
+                    if (currentFile[i].isDirectory()) {
+                        scanFiles(currentFile[i]);
                     } else {
-                        int extensionPoint = listFile[i].getName().lastIndexOf('.');
-                        String extension = listFile[i].getName().substring(extensionPoint);
+                        int extensionPoint = currentFile[i].getName().lastIndexOf('.');
+                        String extension = currentFile[i].getName().substring(extensionPoint);
                         if (extensions.containsKey(extension)) {
                             extensions.put(extension, extensions.get(extension) + 1);
                         } else {
                             extensions.put(extension, 1);
                         }
-                        totalFilesSize += listFile[i].length();
+                        totalFilesSize += currentFile[i].length();
                         ++count;
-
                         averageFileSize = (totalFilesSize / count);
-                        if(fileList.size() < 9){
-                            fileList.add(listFile[i]);
-                            File[] fileListArr = new File[fileList.size()];
-                            fileListArr = fileList.toArray(fileListArr);
-                            Arrays.sort(fileListArr ,new Comparator<File>() {
-                                @Override
-                                public int compare(File first, File second) {
-                                    int result = Long.valueOf(first.length())
-                                            .compareTo(Long.valueOf(second.length()));
-                                    return result;
-                                }
-                            });
-                        }else if (fileList.size() > 9 &&
-                                listFile[i].length() > fileList.get(0).length()) {
-                            File[] fileListArr = new File[fileList.size()];
-                            fileList.add(listFile[i]);
-                            fileListArr = fileList.toArray(fileListArr);
-                            Arrays.sort(fileListArr ,new Comparator<File>() {
-                                @Override
-                                public int compare(File first, File second) {
-                                    int result = Long.valueOf(first.length())
-                                            .compareTo(Long.valueOf(second.length()));
-                                    return result;
-                                }
-                            });
-//                            SortingInformation.insertionSort(fileList);
-//                                sendFileList();
+                        if(count <= 10) {
+                            temporary[count - 1] = currentFile[i];
+                        }else if (count > 10 &&
+                                currentFile[i].length() > temporary[0].length()) {
+                            temporary[0] = currentFile[i];
+                            SortingInformation.insertionSort(temporary);
                             sendExtensionsAndSize();
 
+                        }if(count == 10){
+                            SortingInformation.insertionSort(temporary);
                         }
                     }
                 }
