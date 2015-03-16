@@ -11,12 +11,11 @@
         android:layout_height="wrap_content"
         android:text="@string/biggestFiles"
         android:id="@+id/FilesTitle" />
-    <LinearLayout
+    <ListView
         android:layout_width="wrap_content"
-        android:orientation="vertical"
         android:layout_height="wrap_content"
         android:id="@+id/biggestExternalFilesList">
-        </LinearLayout>
+        </ListView>
 
 
     <TextView
@@ -25,12 +24,11 @@
         android:text="@string/mostFrequentExtensions"
         android:id="@+id/extensionsTitle" />
 
-    <LinearLayout
+    <ListView
         android:layout_width="wrap_content"
-        android:orientation="vertical"
         android:layout_height="wrap_content"
         android:id="@+id/mostFrequentExtensionsExternalList">
-    </LinearLayout>
+    </ListView>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

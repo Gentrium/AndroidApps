@@ -2,17 +2,13 @@ package com.example.maks.filesstatisticapp;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.AsyncTask;
-import android.os.Environment;
-import android.provider.ContactsContract;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,9 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -33,14 +27,14 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
     private ArrayList<String> extensionsArray = new ArrayList<>();
     private ArrayList<String> fileList = new ArrayList<>();
     private long averageFileSize;
-    private LinearLayout view;
     private Button btnStart;
-    private Button btnStop;
     private RadioGroup radioGroup;
     private FragmentTransaction fragmentTransaction;
     private int target;
     private Intent data;
     BroadcastReceiver br;
+    Fragment externalFragment = new ExternalStorageFragment();
+
 
     public static final String EXTENSIONS_LIST = "extensions";
     public static final String AVERAGE_FILE_SIZE = "average file size";
@@ -62,13 +56,9 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
         btnStart = (Button) findViewById(R.id.btnStart);
         btnStart.setOnClickListener(this);
 
-        btnStop = (Button) findViewById(R.id.btnStop);
+        Button btnStop = (Button) findViewById(R.id.btnStop);
         btnStop.setOnClickListener(this);
 
-        Fragment externalFrag = getFragmentManager()
-                .findFragmentById(R.layout.fragment_external_storage);
-        Fragment internalFrag = getFragmentManager()
-                .findFragmentById(R.layout.fragment_internal_storage);
         br = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -80,21 +70,13 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
 
                     switch (target) {
                         case EXTERNAL_TESTING:
-//                            new FillData().execute();
-//                            try {
-//                                TimeUnit.SECONDS.sleep(1);
-//                            } catch (InterruptedException e) {
-//                                e.printStackTrace();
-//                            }
                             fileList = data.getStringArrayListExtra(FILE_LIST);
                             extensionsArray = data.getStringArrayListExtra(EXTENSIONS_LIST);
                             averageFileSize = data.getLongExtra(AVERAGE_FILE_SIZE,0);
                             target = data.getIntExtra(TEST_TARGET,0);
-                            fragmentTransaction = getFragmentManager().beginTransaction();
                             switch (target){
                                 case EXTERNAL_TESTING:
                                     ExternalStorageFragment.fillData(fileList, extensionsArray,averageFileSize);
-                                    fragmentTransaction.commit();
                                     break;
                                 case INTERNAL_TESTING:
 //                InternalStorageFragment.
@@ -126,9 +108,12 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
             case R.id.btnStart:
                 switch (radioGroup.getCheckedRadioButtonId()){
                     case R.id.externalRB:
+                        fragmentTransaction = getFragmentManager().beginTransaction();
+                        fragmentTransaction.add(R.id.externalFrag, this.externalFragment).commit();
                         intent = new Intent(this, DataProcessing.class)
                                 .putExtra(TEST_TARGET, EXTERNAL_TESTING);
                         startService(intent);
+
                         break;
                     case R.id.internalRB:
                         intent = new Intent(this, DataProcessing.class)
@@ -186,11 +171,9 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
             extensionsArray = data.getStringArrayListExtra(EXTENSIONS_LIST);
             averageFileSize = data.getLongExtra(AVERAGE_FILE_SIZE,0);
             target = data.getIntExtra(TEST_TARGET,0);
-            fragmentTransaction = getFragmentManager().beginTransaction();
             switch (target){
                 case EXTERNAL_TESTING:
                     ExternalStorageFragment.fillData(fileList, extensionsArray,averageFileSize);
-                    fragmentTransaction.commit();
                     break;
                 case INTERNAL_TESTING:
 //                InternalStorageFragment.
@@ -198,6 +181,9 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
             }
             return null;
         }
+        public void onPostExecute(Void... params ) {
+
+    }
     }
 
   @Override

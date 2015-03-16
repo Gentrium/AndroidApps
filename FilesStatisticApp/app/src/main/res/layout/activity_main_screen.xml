@@ -9,7 +9,7 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="wrap_content">
 
 
 
@@ -66,21 +66,21 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
-        <fragment
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:name=
-                "com.example.maks.filesstatisticapp.ExternalStorageFragment"
-            android:id="@+id/externalFragment"
-            tools:layout="@layout/fragment_external_storage" />
-        <fragment
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/internalFragment"
-            android:name=
-                "com.example.maks.filesstatisticapp.InternalStorageFragment"
-            tools:layout="@layout/fragment_internal_storage" />
+        android:layout_height="fill_parent"
+           android:id="@+id/externalFrag1"
+        android:baselineAligned="false">
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:id="@+id/externalFrag"
+            android:layout_weight="1">
+            </FrameLayout>
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:id="@+id/internalFrag"
+            android:layout_weight="1">
+        </FrameLayout>
         </LinearLayout>
 
 </LinearLayout>

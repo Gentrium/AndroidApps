@@ -1,14 +1,12 @@
 package com.example.maks.filesstatisticapp;
 
-import android.app.Activity;
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -16,17 +14,21 @@ import java.util.ArrayList;
 
 public class ExternalStorageFragment extends Fragment {
 
-    private static LinearLayout listOfFiles;
-    private static LinearLayout listOfExtensions;
     private static TextView averageFileSize;
-    private ArrayList<String> fileList;
-    private ArrayList<String> extensionsList;
-    private long averageFileSizeText;
-    static Context context;
+    private static ArrayList<String> fileList = new ArrayList<>();
+    private static ArrayList<String> extensionsList = new ArrayList<>();
+    static ArrayAdapter<String> extensionsAdapter;
+    static ArrayAdapter<String> fileListAdapter;
+    ListView filesListView;
+    ListView extensionsListView;
 
     public ExternalStorageFragment() {
         // Required empty public constructor
     }
+
+//    public static void setContext(Context context) {
+//        ExternalStorageFragment.context = context;
+//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,45 +39,36 @@ public class ExternalStorageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_external_storage,null);
+        View v = inflater.inflate(R.layout.fragment_external_storage,container,false);
 
-        listOfFiles = (LinearLayout) v.findViewById(R.id.biggestExternalFilesList);
-
-        listOfExtensions = (LinearLayout) v.findViewById(R.id.mostFrequentExtensionsExternalList);
-
+        filesListView = (ListView) v.findViewById(R.id.biggestExternalFilesList);
+        extensionsListView = (ListView) v.findViewById(R.id.mostFrequentExtensionsExternalList);
         averageFileSize = (TextView) v.findViewById(R.id.averageExternalFileSize);
 
+        extensionsAdapter = new ArrayAdapter<>(v.getContext(),
+                R.layout.list_item,
+                extensionsList);
+        fileListAdapter = new ArrayAdapter<>(v.getContext(),
+                R.layout.list_item,
+                fileList);
+
+        filesListView.setAdapter(fileListAdapter);
+        extensionsListView.setAdapter(extensionsAdapter);
 
         return v;
     }
 
-    public static void fillData(ArrayList<String> fileList,
-                                ArrayList<String> extensionsList,
-                                long averageFileSizeText){
+    protected static void fillData(ArrayList<String> fileList,
+                                   ArrayList<String> extensionsList,
+                                   long averageFileSizeText){
+        ExternalStorageFragment.fileList = fileList;
+        ExternalStorageFragment.extensionsList = extensionsList;
 
-        if (extensionsList.size()>4) {
-            for (String e : extensionsList.subList(0, 5)) {
-                TextView textView = new TextView(context);
-                textView.setText(e);
-                textView.setPadding(5, 5, 5, 5);
-                listOfExtensions.addView(textView);
-            }
-        } else{
-            for (String e : extensionsList) {
-                TextView textView = new TextView(context);
-                textView.setText(e);
-                textView.setPadding(5, 5, 5, 5);
-                listOfExtensions.addView(textView);
-            }
+        fileListAdapter.notifyDataSetChanged();
+        extensionsAdapter.notifyDataSetChanged();
+        String s = Long.toString(averageFileSizeText);
 
-        }
-        for(String e: fileList){
-            TextView textView = new TextView(context);
-            textView.setText(e);
-            textView.setPadding(5, 5, 5, 5);
-            listOfFiles.addView(textView);
-        }
-        averageFileSize.setText((int) averageFileSizeText);
+        averageFileSize.setText(s);
     }
 
 }
