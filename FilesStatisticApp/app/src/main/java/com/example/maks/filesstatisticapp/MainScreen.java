@@ -14,11 +14,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 public class MainScreen extends ActionBarActivity implements View.OnClickListener {
@@ -33,7 +34,9 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
     private int target;
     private Intent data;
     BroadcastReceiver br;
-    Fragment externalFragment = new ExternalStorageFragment();
+    Lock dataLock = new ReentrantLock();
+    ExternalStorageFragment externalFragment = new ExternalStorageFragment();
+    InternalStorageFragment internalFragment = new InternalStorageFragment();
 
 
     public static final String EXTENSIONS_LIST = "extensions";
@@ -59,6 +62,8 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
         Button btnStop = (Button) findViewById(R.id.btnStop);
         btnStop.setOnClickListener(this);
 
+
+
         br = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -67,29 +72,17 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
 
                 target = intent.getIntExtra(TEST_TARGET,0);
                 data = intent;
-
+                fileList = data.getStringArrayListExtra(FILE_LIST);
+                extensionsArray = data.getStringArrayListExtra(EXTENSIONS_LIST);
+                averageFileSize = data.getLongExtra(AVERAGE_FILE_SIZE,0);
+                target = data.getIntExtra(TEST_TARGET,0);
+                dataLock.lock();
                     switch (target) {
                         case EXTERNAL_TESTING:
-                            fileList = data.getStringArrayListExtra(FILE_LIST);
-                            extensionsArray = data.getStringArrayListExtra(EXTENSIONS_LIST);
-                            averageFileSize = data.getLongExtra(AVERAGE_FILE_SIZE,0);
-                            target = data.getIntExtra(TEST_TARGET,0);
-                            switch (target){
-                                case EXTERNAL_TESTING:
-                                    ExternalStorageFragment.fillData(fileList, extensionsArray,averageFileSize);
-                                    break;
-                                case INTERNAL_TESTING:
-//                InternalStorageFragment.
-                                    break;
-                            }
+                            new FillData().execute();
                             break;
                         case INTERNAL_TESTING:
                             new FillData().execute();
-                            try {
-                                TimeUnit.SECONDS.sleep(1);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
                             break;
                         default:
                     }
@@ -116,11 +109,16 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
 
                         break;
                     case R.id.internalRB:
+                        fragmentTransaction = getFragmentManager().beginTransaction();
+                        fragmentTransaction.add(R.id.internalFrag, this.internalFragment).commit();
                         intent = new Intent(this, DataProcessing.class)
                                 .putExtra(TEST_TARGET, INTERNAL_TESTING);
                         startService(intent);
                         break;
                     case R.id.external_internalRB:
+                        fragmentTransaction = getFragmentManager().beginTransaction();
+                        fragmentTransaction.add(R.id.internalFrag, this.internalFragment);
+                        fragmentTransaction.add(R.id.externalFrag, this.externalFragment).commit();
                         intent = new Intent(this, DataProcessing.class)
                             .putExtra(TEST_TARGET, INTERNAL_TESTING);
                         startService(intent);
@@ -158,11 +156,6 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
         return super.onOptionsItemSelected(item);
     }
 
-    private  void fillData(){
-
-
-    }
-
     private class FillData extends AsyncTask<Void, Void, Void>{
 
         @Override
@@ -171,19 +164,24 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
             extensionsArray = data.getStringArrayListExtra(EXTENSIONS_LIST);
             averageFileSize = data.getLongExtra(AVERAGE_FILE_SIZE,0);
             target = data.getIntExtra(TEST_TARGET,0);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
             switch (target){
                 case EXTERNAL_TESTING:
                     ExternalStorageFragment.fillData(fileList, extensionsArray,averageFileSize);
+
                     break;
                 case INTERNAL_TESTING:
-//                InternalStorageFragment.
+                    InternalStorageFragment.fillData(fileList, extensionsArray,averageFileSize);
                     break;
             }
-            return null;
+            dataLock.unlock();
+            super.onPostExecute(aVoid);
         }
-        public void onPostExecute(Void... params ) {
-
-    }
     }
 
   @Override

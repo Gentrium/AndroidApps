@@ -1,7 +1,7 @@
 package com.example.maks.filesstatisticapp;
 
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,10 +26,6 @@ public class ExternalStorageFragment extends Fragment {
         // Required empty public constructor
     }
 
-//    public static void setContext(Context context) {
-//        ExternalStorageFragment.context = context;
-//    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,17 +35,21 @@ public class ExternalStorageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_external_storage,container,false);
+        View v = inflater.inflate(R.layout.fragment,container,false);
+        TextView title = (TextView) v.findViewById(R.id.fragmentTitle);
+        title.setText(R.string.external_title);
 
-        filesListView = (ListView) v.findViewById(R.id.biggestExternalFilesList);
-        extensionsListView = (ListView) v.findViewById(R.id.mostFrequentExtensionsExternalList);
-        averageFileSize = (TextView) v.findViewById(R.id.averageExternalFileSize);
+        filesListView = (ListView) v.findViewById(R.id.biggestFilesList);
+        extensionsListView = (ListView) v.findViewById(R.id.mostFrequentExtensionsList);
+        averageFileSize = (TextView) v.findViewById(R.id.averageFileSize);
 
-        extensionsAdapter = new ArrayAdapter<>(v.getContext(),
+        extensionsAdapter = new ArrayAdapter<String>(v.getContext(),
                 R.layout.list_item,
+                R.id.textView,
                 extensionsList);
         fileListAdapter = new ArrayAdapter<>(v.getContext(),
                 R.layout.list_item,
+                R.id.textView,
                 fileList);
 
         filesListView.setAdapter(fileListAdapter);
@@ -61,13 +61,18 @@ public class ExternalStorageFragment extends Fragment {
     protected static void fillData(ArrayList<String> fileList,
                                    ArrayList<String> extensionsList,
                                    long averageFileSizeText){
-        ExternalStorageFragment.fileList = fileList;
-        ExternalStorageFragment.extensionsList = extensionsList;
+        ExternalStorageFragment.fileList.clear();
+        ExternalStorageFragment.extensionsList.clear();
+        ExternalStorageFragment.fileList.addAll(fileList);
+        if(extensionsList.size() < 5){
+            ExternalStorageFragment.extensionsList.addAll(extensionsList);
+        }else{
+            ExternalStorageFragment.extensionsList.addAll(extensionsList.subList(0,5));
+        }
 
         fileListAdapter.notifyDataSetChanged();
         extensionsAdapter.notifyDataSetChanged();
-        String s = Long.toString(averageFileSizeText);
-
+        String s = Long.toString(averageFileSizeText / 1024) + "Kb";
         averageFileSize.setText(s);
     }
 

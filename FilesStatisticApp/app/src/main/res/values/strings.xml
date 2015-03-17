@@ -14,4 +14,6 @@
     <string name="internal_external">External/Internal</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
+    <string name="external_title">External Files</string>
+    <string name="internal_title">Internal Files</string>
 </resources>

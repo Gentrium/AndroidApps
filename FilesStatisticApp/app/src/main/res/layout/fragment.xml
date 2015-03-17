@@ -4,8 +4,11 @@
     tools:context="com.example.maks.filesstatisticapp.ExternalStorageFragment"
     android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
 
+        android:id="@+id/fragmentTitle"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -14,7 +17,7 @@
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/biggestExternalFilesList">
+        android:id="@+id/biggestFilesList">
         </ListView>
 
 
@@ -27,11 +30,15 @@
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/mostFrequentExtensionsExternalList">
+        android:id="@+id/mostFrequentExtensionsList">
     </ListView>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/averageFileSize"
-        android:id="@+id/averageExternalFileSize" />
+        android:id="@+id/averageFileSizeTitle" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/averageFileSize" />
 </LinearLayout>

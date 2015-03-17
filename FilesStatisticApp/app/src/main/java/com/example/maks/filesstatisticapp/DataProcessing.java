@@ -15,7 +15,7 @@ public class DataProcessing extends Service {
 
     ExecutorService es;
     File root;
-    int target;
+    static int target;
     int count = 0;
     long totalFilesSize = 0;
 
@@ -34,7 +34,7 @@ public class DataProcessing extends Service {
                 target = MainScreen.EXTERNAL_TESTING;
                 break;
             case MainScreen.INTERNAL_TESTING:
-                root = new File(Environment.getRootDirectory().getAbsolutePath());
+                root = new File(Environment.getDataDirectory().getAbsolutePath());
                 target = MainScreen.INTERNAL_TESTING;
                 break;
             default:
