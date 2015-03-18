@@ -72,6 +72,10 @@ public class DataProcessing extends Service {
 
         public void run() {
             scanFiles(root);
+            stopSelf();
+            if(stopSelfResult(startId)){
+
+            }
             stop();
         }
         void stop() {

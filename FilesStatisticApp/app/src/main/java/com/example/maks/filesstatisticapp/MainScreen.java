@@ -94,6 +94,10 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
         registerReceiver(br, intFilter);
     }
 
+    public void enableBtnStart(){
+        btnStart.setEnabled(true);
+    }
+
     public void onClick(View v){
         Intent intent;
 
