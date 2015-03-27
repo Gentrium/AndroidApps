@@ -1,6 +1,5 @@
 package com.example.maks.filesstatisticapp;
 
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -15,12 +14,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
+import android.widget.TabHost;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 
 public class MainScreen extends ActionBarActivity implements View.OnClickListener {
     public static final String LOG_TAG = "";
@@ -28,13 +24,12 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
     private ArrayList<String> extensionsArray = new ArrayList<>();
     private ArrayList<String> fileList = new ArrayList<>();
     private long averageFileSize;
-    private Button btnStart;
+    private static Button btnStart;
     private RadioGroup radioGroup;
     private FragmentTransaction fragmentTransaction;
     private int target;
     private Intent data;
     BroadcastReceiver br;
-    Lock dataLock = new ReentrantLock();
     ExternalStorageFragment externalFragment = new ExternalStorageFragment();
     InternalStorageFragment internalFragment = new InternalStorageFragment();
 
@@ -62,7 +57,20 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
         Button btnStop = (Button) findViewById(R.id.btnStop);
         btnStop.setOnClickListener(this);
 
+        TabHost tabHost = (TabHost) findViewById(R.id.tabHost);
+        tabHost.setup();
 
+        TabHost.TabSpec tabSpec;
+        tabSpec = tabHost.newTabSpec("external");
+        tabSpec.setIndicator("External Testing");
+        tabSpec.setContent(R.id.externalFrag);
+        tabHost.addTab(tabSpec);
+
+        tabSpec = tabHost.newTabSpec("internal");
+        tabSpec.setIndicator("Internal testing");
+        tabSpec.setContent(R.id.internalFrag);
+        tabHost.addTab(tabSpec);
+        tabHost.setCurrentTab(0);
 
         br = new BroadcastReceiver() {
             @Override
@@ -76,7 +84,6 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
                 extensionsArray = data.getStringArrayListExtra(EXTENSIONS_LIST);
                 averageFileSize = data.getLongExtra(AVERAGE_FILE_SIZE,0);
                 target = data.getIntExtra(TEST_TARGET,0);
-                dataLock.lock();
                     switch (target) {
                         case EXTERNAL_TESTING:
                             new FillData().execute();
@@ -94,7 +101,7 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
         registerReceiver(br, intFilter);
     }
 
-    public void enableBtnStart(){
+    public static void enableBtnStart(){
         btnStart.setEnabled(true);
     }
 
@@ -183,7 +190,6 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
                     InternalStorageFragment.fillData(fileList, extensionsArray,averageFileSize);
                     break;
             }
-            dataLock.unlock();
             super.onPostExecute(aVoid);
         }
     }

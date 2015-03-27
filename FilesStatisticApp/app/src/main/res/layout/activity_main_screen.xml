@@ -63,15 +63,6 @@
         </RadioGroup>
     </LinearLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-           android:id="@+id/externalFrag1"
-        android:baselineAligned="false">
-
-        </LinearLayout>
-
     <TabHost
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -86,28 +77,25 @@
             <TabWidget
                 android:id="@android:id/tabs"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-
-                />
+                android:layout_height="wrap_content"></TabWidget>
 
             <FrameLayout
                 android:id="@android:id/tabcontent"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
-                <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
-                    android:id="@+id/internalFrag"
-                    >
-                </FrameLayout>
 
                 <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
                     android:id="@+id/externalFrag"
-                    >
-                </FrameLayout>
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical"></FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/internalFrag"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical"></FrameLayout>
+
             </FrameLayout>
         </LinearLayout>
     </TabHost>

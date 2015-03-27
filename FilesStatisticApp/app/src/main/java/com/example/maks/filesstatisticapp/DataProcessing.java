@@ -109,7 +109,12 @@ public class DataProcessing extends Service {
                         scanFiles(currentFile[i]);
                     } else {
                         int extensionPoint = currentFile[i].getName().lastIndexOf('.');
-                        String extension = currentFile[i].getName().substring(extensionPoint);
+                        String extension = null;
+                        try{
+                            extension = currentFile[i].getName().substring(extensionPoint);
+                        }catch (StringIndexOutOfBoundsException e){
+                            e.printStackTrace();
+                        }
                         if (extensions.containsKey(extension)) {
                             extensions.put(extension, extensions.get(extension) + 1);
                         } else {
