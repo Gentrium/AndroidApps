@@ -4,14 +4,18 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Environment;
 import android.os.IBinder;
+import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class DataProcessing extends Service {
+
+    public static final String LOG_TAG = "data";
 
     ExecutorService es;
     File root;
@@ -26,29 +30,23 @@ public class DataProcessing extends Service {
 
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        int testingTarget = intent.getIntExtra(MainScreen.TEST_TARGET, 1);
+        int testingTarget = intent.getIntExtra(Constants.TEST_TARGET, 1);
         switch (testingTarget){
-            case MainScreen.EXTERNAL_TESTING:
+            case Constants.EXTERNAL_TESTING:
                 root = new File(Environment.getExternalStorageDirectory()
                         .getAbsolutePath());
-                target = MainScreen.EXTERNAL_TESTING;
+                target = Constants.EXTERNAL_TESTING;
                 break;
-            case MainScreen.INTERNAL_TESTING:
+            case Constants.INTERNAL_TESTING:
                 root = new File(Environment.getDataDirectory().getAbsolutePath());
-                target = MainScreen.INTERNAL_TESTING;
+                target = Constants.INTERNAL_TESTING;
                 break;
             default:
         }
 
-
-        MyRun mr = new MyRun(startId, root, target);
-        es.execute(mr);
+        es.execute(new MyRun(startId, root, target));
 
         return super.onStartCommand(intent, flags, startId);
-    }
-
-
-    public DataProcessing() {
     }
 
     @Override
@@ -57,9 +55,7 @@ public class DataProcessing extends Service {
     }
 
     class MyRun implements Runnable {
-        private File[] temporary = new File[10];
-        private TreeMap<String, Integer> extensions = new TreeMap<>();
-        private long averageFileSize = 0;
+
         int startId;
         File root;
         int target;
@@ -72,71 +68,85 @@ public class DataProcessing extends Service {
 
         public void run() {
             scanFiles(root);
-            stopSelf();
-            if(stopSelfResult(startId)){
-
-            }
             stop();
         }
+
         void stop() {
+            stopSelf(startId);
+            sendBroadcast(new Intent(Constants.BROADCAST_ACTION)
+                    .putExtra(Constants.TEST_TARGET, Constants.TESTING_FINISH));
+            Log.d(LOG_TAG, "MyRun#" + startId + " end, stopSelfResult("
+                    + startId + ") = " + stopSelfResult(startId));
+            Log.d(LOG_TAG, "MyRun#" + startId + " end, stopSelf(" + startId + ")");
         }
 
-        protected void sendExtensionsAndSize(){
-            TreeMap temp = new TreeMap();
-            temp =(TreeMap)SortingInformation.sortByValues(extensions);
-            ArrayList<String> extensionsArray = new ArrayList<>();
-            ArrayList<String> tempFileList = new ArrayList<>();
-            for(Object o : temp.entrySet()){
-                extensionsArray.add(o.toString());
+        protected void sendExtensionsAndSize(File[] files, TreeMap<String, Integer> extensions, long averageFileSize){
+            SortingInformation.sortByValues(extensions);
+            ArrayList<String> extensionsValues = new ArrayList<>();
+            ArrayList<String> extensionsNames = new ArrayList<>();
+
+            ArrayList<String> filesNames = new ArrayList<>();
+            ArrayList<String> filesSize = new ArrayList<>();
+
+            for(Object o : extensions.values()) extensionsValues.add(o.toString());
+            for(Object o : extensions.keySet()) extensionsNames.add(o.toString());
+
+            for (File f : files) {
+                filesNames.add(f.getName());
+                filesSize.add((f.length() / 1024 + "Kb").toString());
             }
-            for (File f : temporary) {
-                tempFileList.add((f.getName() + ' ' + f.length() / 1024 + "Kb").toString());
-            }
-            Intent intent = new Intent(MainScreen.BROADCAST_ACTION)
-                    .putExtra(MainScreen.AVERAGE_FILE_SIZE, averageFileSize)
-                    .putStringArrayListExtra(MainScreen.EXTENSIONS_LIST, extensionsArray)
-                    .putStringArrayListExtra(MainScreen.FILE_LIST, tempFileList)
-                    .putExtra(MainScreen.TEST_TARGET,target);
+            Intent intent = new Intent(Constants.BROADCAST_ACTION)
+                    .putExtra(Constants.AVERAGE_FILE_SIZE, averageFileSize)
+                    .putStringArrayListExtra(Constants.EXTENSIONS_NAMES, extensionsNames)
+                    .putStringArrayListExtra(Constants.EXTENSIONS_FREQUENCY, extensionsValues)
+                    .putStringArrayListExtra(Constants.FILE_NAMES, filesNames)
+                    .putStringArrayListExtra(Constants.FILE_SIZE, filesSize)
+                    .putExtra(Constants.TEST_TARGET,target);
 
             sendBroadcast(intent);
         }
 
         public File[] scanFiles(File dir) {
+            File[] files = new File[10];
+            TreeMap<String, Integer> extensions = new TreeMap<>();
+            long averageFileSize = 0;
             File currentFile[] = dir.listFiles();
             if (currentFile != null && currentFile.length > 0) {
                 for (int i = 0; i < currentFile.length; i++) {
                     if (currentFile[i].isDirectory()) {
                         scanFiles(currentFile[i]);
                     } else {
-                        int extensionPoint = currentFile[i].getName().lastIndexOf('.');
-                        String extension = null;
-                        try{
-                            extension = currentFile[i].getName().substring(extensionPoint);
-                        }catch (StringIndexOutOfBoundsException e){
-                            e.printStackTrace();
+                        //Adding to Extensions map
+                        if(currentFile[i].getName().contains(".")) {
+                            int extensionPoint = currentFile[i].getName().lastIndexOf('.');
+                            String extension  = currentFile[i].getName().substring(extensionPoint);
+                            if (extensions.containsKey(extension)) {
+                                extensions.put(extension, extensions.get(extension) + 1);
+                            } else {
+                                extensions.put(extension, 1);
+                            }
                         }
-                        if (extensions.containsKey(extension)) {
-                            extensions.put(extension, extensions.get(extension) + 1);
-                        } else {
-                            extensions.put(extension, 1);
-                        }
+
+                        //Total file size
                         totalFilesSize += currentFile[i].length();
                         ++count;
                         averageFileSize = (totalFilesSize / count);
-                        if(count <= 10) {
-                            temporary[count - 1] = currentFile[i];
-                        }else if (count > 10 &&
-                                currentFile[i].length() > temporary[0].length()) {
-                            temporary[0] = currentFile[i];
-                            SortingInformation.insertionSort(temporary);
-                            sendExtensionsAndSize();
 
-                        }if(count == 10){
-                            SortingInformation.insertionSort(temporary);
+                        //Sorting file list
+                        if(count <= 10) {
+                            files[count - 1] = currentFile[i];
+                            if(count == 10)
+                                SortingInformation.insertionSort(files);
+                        }else if (count > 10 &&
+                                currentFile[i].length() > files[0].length()) {
+                            files[0] = currentFile[i];
+                            SortingInformation.insertionSort(files);
+                            sendExtensionsAndSize(files, extensions, averageFileSize);
                         }
                     }
                 }
             }
+
             return null;
         }
     }

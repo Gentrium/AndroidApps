@@ -12,8 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-
-
+import java.util.List;
 
 public class InternalStorageFragment extends Fragment {
 
@@ -25,7 +24,6 @@ public class InternalStorageFragment extends Fragment {
     ListView filesListView;
     ListView extensionsListView;
 
-
     public InternalStorageFragment() {
         // Required empty public constructor
     }
@@ -33,7 +31,6 @@ public class InternalStorageFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -41,7 +38,6 @@ public class InternalStorageFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment,null);
         TextView title = (TextView) v.findViewById(R.id.fragmentTitle);
-        title.setText(R.string.internal_title);
 
         filesListView = (ListView) v.findViewById(R.id.biggestFilesList);
         extensionsListView = (ListView) v.findViewById(R.id.mostFrequentExtensionsList);
@@ -58,10 +54,12 @@ public class InternalStorageFragment extends Fragment {
 
         filesListView.setAdapter(fileListAdapter);
         extensionsListView.setAdapter(extensionsAdapter);
+
         return v;
     }
-    public static void fillData(ArrayList<String> fileList,
-                         ArrayList<String> extensionsList,
+
+    public static void fillData(List<String> fileList,
+                         List<String> extensionsList,
                          long averageFileSizeText){
         InternalStorageFragment.fileList.clear();
         InternalStorageFragment.extensionsList.clear();

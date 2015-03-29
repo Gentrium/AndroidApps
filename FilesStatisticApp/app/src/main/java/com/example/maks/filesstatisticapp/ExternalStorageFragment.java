@@ -10,6 +10,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class ExternalStorageFragment extends Fragment {
@@ -37,7 +38,6 @@ public class ExternalStorageFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment,container,false);
         TextView title = (TextView) v.findViewById(R.id.fragmentTitle);
-        title.setText(R.string.external_title);
 
         filesListView = (ListView) v.findViewById(R.id.biggestFilesList);
         extensionsListView = (ListView) v.findViewById(R.id.mostFrequentExtensionsList);
@@ -58,8 +58,8 @@ public class ExternalStorageFragment extends Fragment {
         return v;
     }
 
-    protected static void fillData(ArrayList<String> fileList,
-                                   ArrayList<String> extensionsList,
+    protected static void fillData(List<String> fileList,
+                                   List<String> extensionsList,
                                    long averageFileSizeText){
         ExternalStorageFragment.fileList.clear();
         ExternalStorageFragment.extensionsList.clear();
