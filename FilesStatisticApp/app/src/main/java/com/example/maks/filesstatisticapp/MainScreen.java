@@ -38,7 +38,7 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
                 int target = intent.getIntExtra(Constants.TEST_TARGET,0);
                 switch (target){
                     case Constants.EXTERNAL_TESTING:
-//                        internalFragment.fillData(intent);
+                        internalFragment.fillData(intent);
                         break;
                     case Constants.INTERNAL_TESTING:
 //                        InternalStorageFragment.fillData(intent);
@@ -49,8 +49,6 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
                 }
             }
         };
-        IntentFilter intFilter = new IntentFilter(Constants.BROADCAST_ACTION);
-        registerReceiver(br, intFilter);
     }
 
     public void onClick(View v){
@@ -113,6 +111,13 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
         tabSpec.setContent(R.id.internalFrag);
         tabHost.addTab(tabSpec);
         tabHost.setCurrentTab(0);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter intFilter = new IntentFilter(Constants.BROADCAST_ACTION);
+        registerReceiver(br, intFilter);
     }
 
     @Override

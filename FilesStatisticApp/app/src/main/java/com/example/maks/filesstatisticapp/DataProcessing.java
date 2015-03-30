@@ -59,6 +59,9 @@ public class DataProcessing extends Service {
         int startId;
         File root;
         int target;
+        File[] files = new File[10];
+        TreeMap<String, Integer> extensions = new TreeMap<>();
+        long averageFileSize = 0;
 
         public MyRun( int startId, File root, int target) {
             this.startId = startId;
@@ -93,7 +96,7 @@ public class DataProcessing extends Service {
 
             for (File f : files) {
                 filesNames.add(f.getName());
-                filesSize.add((f.length() / 1024 + "Kb").toString());
+                filesSize.add(f.length() / 1024 + "Kb");
             }
             Intent intent = new Intent(Constants.BROADCAST_ACTION)
                     .putExtra(Constants.AVERAGE_FILE_SIZE, averageFileSize)
@@ -107,9 +110,6 @@ public class DataProcessing extends Service {
         }
 
         public File[] scanFiles(File dir) {
-            File[] files = new File[10];
-            TreeMap<String, Integer> extensions = new TreeMap<>();
-            long averageFileSize = 0;
             File currentFile[] = dir.listFiles();
             if (currentFile != null && currentFile.length > 0) {
                 for (int i = 0; i < currentFile.length; i++) {

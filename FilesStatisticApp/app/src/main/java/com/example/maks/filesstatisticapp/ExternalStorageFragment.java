@@ -45,11 +45,11 @@ public class ExternalStorageFragment extends Fragment {
 
         extensionsAdapter = new ArrayAdapter<String>(v.getContext(),
                 R.layout.list_item,
-                R.id.textView,
+                R.id.textViewNames,
                 extensionsList);
         fileListAdapter = new ArrayAdapter<>(v.getContext(),
                 R.layout.list_item,
-                R.id.textView,
+                R.id.textViewNames,
                 fileList);
 
         filesListView.setAdapter(fileListAdapter);
