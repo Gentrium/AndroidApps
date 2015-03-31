@@ -18,6 +18,7 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
     private static Button btnStart;
     private RadioGroup radioGroup;
     private BroadcastReceiver br;
+    private TabHost tabHost;
     StorageFragment externalFragment = new StorageFragment();
     StorageFragment internalFragment = new StorageFragment();
 
@@ -59,10 +60,12 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
                     case R.id.externalRB:
                         intent = new Intent(this, DataProcessing.class)
                                 .putExtra(Constants.TEST_TARGET, Constants.EXTERNAL_TESTING);
+                        tabHost.setCurrentTabByTag("external");
                         break;
                     case R.id.internalRB:
                         intent = new Intent(this, DataProcessing.class)
                                 .putExtra(Constants.TEST_TARGET, Constants.INTERNAL_TESTING);
+                        tabHost.setCurrentTabByTag("internal");
                         break;
                     case R.id.external_internalRB:
                         intent = new Intent(this, DataProcessing.class)
@@ -96,7 +99,7 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
                 .add(R.id.externalFrag, this.externalFragment)
                 .commit();
 
-        TabHost tabHost = (TabHost) findViewById(R.id.tabHost);
+        tabHost = (TabHost) findViewById(R.id.tabHost);
         tabHost.setup();
 
         TabHost.TabSpec tabSpec;
