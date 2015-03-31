@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class InternalStorageFragment extends Fragment {
+public class StorageFragment extends Fragment {
 
     private TextView averageFileSize;
     private ArrayList<String> filesNames = new ArrayList<>();
@@ -29,7 +29,7 @@ public class InternalStorageFragment extends Fragment {
     ListView filesListView;
     ListView extensionsListView;
 
-    public InternalStorageFragment() {
+    public StorageFragment() {
         // Required empty public constructor
     }
 

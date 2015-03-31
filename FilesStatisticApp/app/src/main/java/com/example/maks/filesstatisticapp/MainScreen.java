@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
@@ -19,8 +18,8 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
     private static Button btnStart;
     private RadioGroup radioGroup;
     private BroadcastReceiver br;
-    ExternalStorageFragment externalFragment = new ExternalStorageFragment();
-    InternalStorageFragment internalFragment = new InternalStorageFragment();
+    StorageFragment externalFragment = new StorageFragment();
+    StorageFragment internalFragment = new StorageFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +37,10 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
                 int target = intent.getIntExtra(Constants.TEST_TARGET,0);
                 switch (target){
                     case Constants.EXTERNAL_TESTING:
-                        internalFragment.fillData(intent);
+                        externalFragment.fillData(intent);
                         break;
                     case Constants.INTERNAL_TESTING:
-//                        InternalStorageFragment.fillData(intent);
+                        internalFragment.fillData(intent);
                         break;
                     case Constants.TESTING_FINISH:
                         btnStart.setEnabled(true);
