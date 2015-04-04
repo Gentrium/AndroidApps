@@ -23,7 +23,10 @@
         android:layout_height="wrap_content"
         android:id="@+id/biggestFilesList"
         android:scrollbars="none"
-        android:isScrollContainer="false">
+        android:isScrollContainer="false"
+        android:focusable="false"
+        android:choiceMode="none"
+        android:clickable="false">
         </ListView>
 
 

@@ -135,8 +135,10 @@ public class DataProcessing extends Service {
                         //Sorting file list
                         if(count <= 10) {
                             files[count - 1] = currentFile[i];
-                            if(count == 10)
+                            if(count == 10) {
                                 SortingInformation.insertionSort(files);
+                                sendExtensionsAndSize(files, extensions, averageFileSize);
+                            }
                         }else if (count > 10 &&
                                 currentFile[i].length() > files[0].length()) {
                             files[0] = currentFile[i];
