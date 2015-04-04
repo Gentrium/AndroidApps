@@ -4,29 +4,23 @@
     tools:context="com.example.maks.filesstatisticapp.StorageFragment"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
     android:orientation="vertical"
     android:scrollbars="vertical"
-    android:isScrollContainer="true">
+    android:scrollbarAlwaysDrawVerticalTrack="true"
+    android:isScrollContainer="true"
+    android:overScrollMode="always">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:id="@+id/fragmentTitle"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/biggestFiles"
         android:id="@+id/FilesTitle" />
     <ListView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/biggestFilesList"
-        android:scrollbars="none"
-        android:isScrollContainer="false"
-        android:focusable="false"
-        android:choiceMode="none"
-        android:clickable="false">
+        android:id="@+id/biggestFilesList">
         </ListView>
 
 
@@ -39,9 +33,7 @@
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/mostFrequentExtensionsList"
-        android:scrollbars="none"
-        android:isScrollContainer="false">
+        android:id="@+id/mostFrequentExtensionsList">
     </ListView>
     <TextView
         android:layout_width="wrap_content"

@@ -64,7 +64,11 @@ public class StorageFragment extends Fragment {
                 to);
 
         filesListView.setAdapter(fileListAdapter);
+        filesListView.setClickable(false);
+        filesListView.setItemsCanFocus(false);
         extensionsListView.setAdapter(extensionsAdapter);
+        extensionsListView.setClickable(false);
+        extensionsListView.setItemsCanFocus(false);
 
         return v;
     }
