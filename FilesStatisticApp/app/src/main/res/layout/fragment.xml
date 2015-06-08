@@ -7,20 +7,22 @@
     android:layout_marginLeft="10dp"
     android:layout_marginRight="10dp"
     android:orientation="vertical"
-    android:scrollbars="vertical"
-    android:scrollbarAlwaysDrawVerticalTrack="true"
-    android:isScrollContainer="true"
-    android:overScrollMode="always">
+    >
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/biggestFiles"
-        android:id="@+id/FilesTitle" />
+        android:textColor="#abe2f7"
+        android:id="@+id/FilesTitle"
+        android:layout_weight="1"/>
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/biggestFilesList">
+        android:isScrollContainer="false"
+        android:id="@+id/biggestFilesList"
+        android:fadeScrollbars="false"
+        android:layout_weight="10">
         </ListView>
 
 
@@ -28,21 +30,30 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/mostFrequentExtensions"
-        android:id="@+id/extensionsTitle" />
+        android:textColor="#abe2f7"
+        android:id="@+id/extensionsTitle"
+        android:layout_weight="1"/>
 
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/mostFrequentExtensionsList">
+        android:isScrollContainer="false"
+        android:id="@+id/mostFrequentExtensionsList"
+        android:fadeScrollbars="false"
+        android:layout_weight="5">
     </ListView>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/averageFileSize"
-        android:id="@+id/averageFileSizeTitle" />
+        android:textColor="#abe2f7"
+        android:id="@+id/averageFileSizeTitle"
+        android:layout_weight="1"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/averageFileSize" />
+        android:textColor="#ffffff"
+        android:id="@+id/averageFileSize"
+        android:layout_weight="1"/>
 </LinearLayout>
 

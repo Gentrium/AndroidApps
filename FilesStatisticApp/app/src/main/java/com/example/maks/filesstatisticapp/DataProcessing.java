@@ -8,7 +8,6 @@ import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -38,7 +37,7 @@ public class DataProcessing extends Service {
                 target = Constants.EXTERNAL_TESTING;
                 break;
             case Constants.INTERNAL_TESTING:
-                root = new File(Environment.getDataDirectory().getAbsolutePath());
+                root = new File(Environment.getRootDirectory().getAbsolutePath());
                 target = Constants.INTERNAL_TESTING;
                 break;
             default:

@@ -5,17 +5,20 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TabHost;
+import android.widget.TextView;
 
 public class MainScreen extends ActionBarActivity implements View.OnClickListener {
     public static final String LOG_TAG = "MainScreen";
     //ui
-    private static Button btnStart;
+    private static ImageView btnStart;
+    private static ImageView btnStop;
     private RadioGroup radioGroup;
     private BroadcastReceiver br;
     private TabHost tabHost;
@@ -26,6 +29,7 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
+
 
         // initUO();
         initializeUI();
@@ -89,10 +93,10 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
     private void initializeUI(){
         radioGroup = (RadioGroup) findViewById(R.id.radioGroupStorages);
 
-        btnStart = (Button) findViewById(R.id.btnStart);
+        btnStart = (ImageView) findViewById(R.id.btnStart);
         btnStart.setOnClickListener(this);
 
-        Button btnStop = (Button) findViewById(R.id.btnStop);
+        btnStop = (ImageView) findViewById(R.id.btnStop);
         btnStop.setOnClickListener(this);
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.internalFrag, this.internalFragment)
@@ -112,6 +116,13 @@ public class MainScreen extends ActionBarActivity implements View.OnClickListene
         tabSpec.setIndicator("Internal testing");
         tabSpec.setContent(R.id.internalFrag);
         tabHost.addTab(tabSpec);
+        for (int i = 0; i < tabHost.getTabWidget().getChildCount(); i++) {
+            View v = tabHost.getTabWidget().getChildAt(i);
+
+
+            TextView tv = (TextView) tabHost.getTabWidget().getChildAt(i).findViewById(android.R.id.title);
+            tv.setTextColor(Color.CYAN);
+        }
         tabHost.setCurrentTab(0);
     }
 

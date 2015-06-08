@@ -25,7 +25,6 @@ public class StorageFragment extends Fragment {
     private SimpleAdapter fileListAdapter;
     private ArrayList<Map<String, Object>> filesDataSet = new ArrayList<>();
     private ArrayList<Map<String, Object>> extensionsDataSet = new ArrayList<>();
-    private Map<String, Object> m;
     ListView filesListView;
     ListView extensionsListView;
 
@@ -64,11 +63,7 @@ public class StorageFragment extends Fragment {
                 to);
 
         filesListView.setAdapter(fileListAdapter);
-        filesListView.setClickable(false);
-        filesListView.setItemsCanFocus(false);
         extensionsListView.setAdapter(extensionsAdapter);
-        extensionsListView.setClickable(false);
-        extensionsListView.setItemsCanFocus(false);
 
         return v;
     }
@@ -95,16 +90,17 @@ public class StorageFragment extends Fragment {
                     .addAll(intent.getStringArrayListExtra(Constants.EXTENSIONS_FREQUENCY).subList(0, 5));
         }
 
+        Map<String, Object> m;
         for(int i = 0; i < filesNames.size();i++){
             m = new HashMap<>();
-            m.put(Constants.FILE_NAMES,filesNames.get(i));
-            m.put(Constants.FILE_SIZE,filesSizes.get(i));
+            m.put(Constants.FILE_NAMES, filesNames.get(i));
+            m.put(Constants.FILE_SIZE, filesSizes.get(i));
             filesDataSet.add(m);
         }
         for(int i = 0; i < extensionsNames.size();i++){
             m = new HashMap<>();
             m.put(Constants.EXTENSIONS_NAMES, extensionsNames.get(i));
-            m.put(Constants.EXTENSIONS_FREQUENCY,extensionsFrequency.get(i));
+            m.put(Constants.EXTENSIONS_FREQUENCY, extensionsFrequency.get(i));
             extensionsDataSet.add(m);
         }
         fileListAdapter.notifyDataSetChanged();

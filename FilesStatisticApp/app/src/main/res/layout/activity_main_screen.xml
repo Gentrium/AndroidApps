@@ -1,10 +1,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/linearLayout"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="1"
-    android:isScrollContainer="false">
+    android:isScrollContainer="false"
+    android:background="@drawable/background"
+    >
 
     <LinearLayout
         android:orientation="horizontal"
@@ -15,49 +17,51 @@
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
+            >
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <ImageView
+                android:layout_width="90dp"
+                android:layout_height="45dp"
                 android:text="@string/start"
                 android:id="@+id/btnStart"
+                android:background="@drawable/start"
                 android:layout_gravity="center_horizontal" />
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <ImageView
+                android:layout_width="90dp"
+                android:layout_height="45dp"
                 android:text="@string/stop"
+                android:background="@drawable/stop"
                 android:id="@+id/btnStop"
                 android:layout_gravity="center_horizontal" />
         </LinearLayout>
 
         <RadioGroup
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:id="@+id/radioGroupStorages">
 
             <RadioButton
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
+                android:textColor="#abe2f7"
                 android:text="@string/external"
                 android:id="@+id/externalRB"
                 android:checked="true" />
 
             <RadioButton
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
+                android:textColor="#abe2f7"
                 android:text="@string/internal"
                 android:id="@+id/internalRB"/>
 
             <RadioButton
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
+                android:textColor="#abe2f7"
                 android:text="@string/internal_external"
-                android:id="@+id/external_internalRB"
-                android:enabled="false"
-                android:visibility="gone" />
+                android:id="@+id/external_internalRB" />
         </RadioGroup>
     </LinearLayout>
 
@@ -70,29 +74,32 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            >
 
             <TabWidget
                 android:id="@android:id/tabs"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"></TabWidget>
+                android:layout_width="match_parent"
+                android:layout_height="50dp"/>
 
             <FrameLayout
                 android:id="@android:id/tabcontent"
                 android:layout_width="fill_parent"
+                android:textColor="#abe2f7"
                 android:layout_height="fill_parent">
 
                 <FrameLayout
                     android:id="@+id/externalFrag"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:orientation="vertical"></FrameLayout>
+                    android:textColor="#abe2f7"
+                    android:orientation="vertical"/>
 
                 <FrameLayout
                     android:id="@+id/internalFrag"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:orientation="vertical"></FrameLayout>
+                    android:orientation="vertical"/>
 
             </FrameLayout>
         </LinearLayout>
